@@ -182,11 +182,13 @@
         <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
             <!-- Video Background -->
             <div class="absolute inset-0 z-0">
-                <video autoplay loop muted playsinline class="object-cover w-full h-full opacity-80 scale-110"
+                <video autoplay loop muted playsinline poster="88143.png" class="object-cover w-full h-full opacity-80 scale-110 hidden sm:block"
                     id="hero-video">
                     <!-- Placeholder src. User should add their cinematic video here -->
                     <source src="Animate_the_uploaded_book_cove.mp4" type="video/mp4">
                 </video>
+                <!-- Mobile fallback: static poster/cover image for small screens -->
+                <img src="88143.png" alt="Hero cover" class="object-cover w-full h-full block sm:hidden" aria-hidden="true">
                 <!-- Overlays for perfect text readability -->
                 <div class="absolute inset-0 bg-gradient-to-b from-deep/10 via-transparent to-deep z-10"></div>
                 <div class="absolute inset-0 bg-deep/30 z-10"></div>
