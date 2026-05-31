@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WO... | A Poetic Novel</title>
+
+    <!-- Fonts: Playfair for cinematic serif, Inter for clean modern sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deep: '#050505',
+                        charcoal: '#111111',
+                        graphite: '#1a1a1a',
+                        ivory: '#F9F6F0',
+                        muted: '#A3A3A3',
+                        crimson: '#6B1F1F', // Faded crimson
+                        gold: '#D4AF37', // Soft gold
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Setup */
+        body {
+            background-color: #050505;
+            color: #F9F6F0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Lenis Smooth Scroll base styles */
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+
+        /* Film Grain Overlay */
+        .film-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(circle, transparent 50%, rgba(5, 5, 5, 0.8) 150%);
+        }
+
+        /* Custom Scrollbar for Edge/Chrome */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        /* Utilities */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(249, 246, 240, 0.2);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Hide content initially for GSAP Cinematic Reveals */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(60px);
+            filter: blur(8px);
+        }
+
+        .reveal-fade {
+            opacity: 0;
+            filter: blur(8px);
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased selection:bg-crimson/50 selection:text-white">
+
+    <!-- Global Overlays -->
+    <div class="film-grain"></div>
+    <div class="vignette"></div>
+
+    <!-- PRELOADER (Upgraded to GSAP Cinematic Sequence) -->
+    <div id="preloader" class="fixed inset-0 z-[10000] bg-deep flex flex-col items-center justify-center">
+        <div class="relative overflow-hidden px-8 py-4 flex flex-col items-center">
+            <h1 id="preloader-title"
+                class="text-7xl md:text-9xl font-serif tracking-widest text-ivory opacity-0 transform scale-110 blur-md">
+                WO...</h1>
+            <!-- Animated Line -->
+            <div class="absolute top-1/2 left-0 h-[1px] bg-crimson w-0 z-10" id="preloader-line"></div>
+        </div>
+        <p class="text-muted text-sm mt-8 tracking-[0.2em] uppercase opacity-0" id="preloader-text">Loading Memory</p>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header id="header"
+        class="fixed top-0 left-0 w-full z-50 transition-transform duration-700 ease-in-out glass-panel border-t-0 border-l-0 border-r-0">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="font-serif text-2xl tracking-widest text-ivory">WO...</a>
+            <nav class="hidden md:flex space-x-8 text-sm uppercase tracking-wider text-muted">
+                <a href="#about" class="hover:text-ivory transition-colors duration-300">About</a>
+                <a href="#quotes" class="hover:text-ivory transition-colors duration-300">Quotes</a>
+                <a href="#chapters" class="hover:text-ivory transition-colors duration-300">Chapters</a>
+                <a href="#lucknow" class="hover:text-ivory transition-colors duration-300">Lucknow</a>
+                <a href="#author" class="hover:text-ivory transition-colors duration-300">Author</a>
+            </nav>
+            <a href="#buy"
+                class="px-6 py-2 border border-white/20 hover:border-ivory text-sm uppercase tracking-wider transition-all duration-300 hover:bg-white/5">
+                Coming Soon
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+            <!-- Video Background -->
+            <div class="absolute inset-0 z-0">
+                <video autoplay loop muted playsinline class="object-cover w-full h-full opacity-80 scale-110"
+                    id="hero-video">
+                    <!-- Placeholder src. User should add their cinematic video here -->
+                    <source src="Animate_the_uploaded_book_cove.mp4" type="video/mp4">
+                </video>
+                <!-- Overlays for perfect text readability -->
+                <div class="absolute inset-0 bg-gradient-to-b from-deep/10 via-transparent to-deep z-10"></div>
+                <div class="absolute inset-0 bg-deep/30 z-10"></div>
+            </div>
+
+            <div class="relative z-20 text-center px-4 max-w-4xl mx-auto mt-20" id="hero-content">
+                <!-- <h1 class="text-8xl md:text-[10rem] font-serif tracking-tighter text-ivory text-glow mb-6 leading-none reveal-up">WO...</h1>
+                
+                <h2 class="text-xl md:text-2xl font-light text-muted mb-8 tracking-wide font-serif italic reveal-up" style="transition-delay: 100ms;">
+                    A Poetic Novel of Love, Memory, Longing, and the Future That Never Arrived.
+                </h2>
+                
+                <p class="text-sm md:text-base text-gray-400 max-w-lg mx-auto mb-12 uppercase tracking-[0.2em] leading-relaxed reveal-up" style="transition-delay: 200ms;">
+                    Some stories end.<br>
+                    Some become memories.<br>
+                    <span class="text-ivory">Some refuse to leave.</span>
+                </p>
+                 -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 reveal-up"
+                    style="transition-delay: 300ms;">
+                    <!-- <a href="#about" class="group relative px-8 py-4 bg-ivory text-deep font-medium uppercase tracking-widest text-xs overflow-hidden transition-all hover:scale-105 duration-500">
+                        <span class="relative z-10">Read the Story</span>
+                        <div class="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 z-0"></div>
+                    </a>
+                    <a href="#chapters" class="px-8 py-4 border border-white/20 text-ivory hover:border-white/60 font-medium uppercase tracking-widest text-xs transition-all duration-500 hover:bg-white/5">
+                        Explore Chapters
+                    </a>
+                    <a href="#buy" class="group flex items-center gap-2 text-gold hover:text-white uppercase tracking-widest text-xs transition-colors duration-300">
+                        <span>Buy the Book</span> -->
+                    <svg class="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-50">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-white">Scroll</span>
+                <div class="w-[1px] h-12 bg-white/30 overflow-hidden">
+                    <div
+                        class="w-full h-full bg-white origin-top animate-[scroll-down_2.5s_cubic-bezier(0.8,0,0.2,1)_infinite]">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            @keyframes scroll-down {
+                0% {
+                    transform: scaleY(0);
+                    transform-origin: top;
+                }
+
+                50% {
+                    transform: scaleY(1);
+                    transform-origin: top;
+                }
+
+                50.1% {
+                    transform: scaleY(1);
+                    transform-origin: bottom;
+                }
+
+                100% {
+                    transform: scaleY(0);
+                    transform-origin: bottom;
+                }
+            }
+        </style>
+
+        <!-- SECTION 1: ABOUT THE BOOK -->
+        <section id="about" class="py-32 md:py-48 relative bg-deep">
+            <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 md:gap-24 items-center">
+                <div class="space-y-8">
+                    <p class="text-crimson uppercase tracking-[0.3em] text-xs font-semibold reveal-up">The Narrative</p>
+                    <h3 class="text-4xl md:text-5xl font-serif text-ivory leading-tight reveal-up">
+                        It was never simply a romance story.
+                    </h3>
+                    <div class="space-y-6 text-muted font-light leading-relaxed text-lg reveal-up">
+                        <p>It is the story of a boy who imagined an entire future with someone. He built a world in his
+                            mind—marriage, a home, quiet morning teas, shared dreams, and a family.</p>
+                        <p>Then she left.</p>
+                        <p>But the real tragedy wasn't the loss of a person. The true antagonist of this story is memory
+                            itself. The real loss was the architecture of the future he had built around her, now
+                            standing empty.</p>
+                    </div>
+                </div>
+                <div class="relative aspect-[3/4] w-full max-w-md mx-auto reveal-fade" id="about-image">
+                    <!-- Conceptual Image / Abstract representation -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-tr from-charcoal to-graphite border border-white/5 flex items-center justify-center overflow-hidden group">
+                        <div
+                            class="absolute w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+                        </div>
+                        <p class="font-serif italic text-white/20 text-3xl transform -rotate-90 tracking-widest">Absence
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: STORY THEMES -->
+        <section class="py-24 bg-charcoal relative">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-20 reveal-up">
+                    <p class="text-muted uppercase tracking-[0.3em] text-xs mb-4">Elements of the Story</p>
+                    <h2 class="text-3xl md:text-4xl font-serif text-ivory">The Architecture of Loss</h2>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <!-- Themes array to be generated -->
+                    <script>
+                        const themes = ['Love', 'Memory', 'Longing', 'Dreams', 'Fate', 'Distance', 'Silence', 'Hope'];
+                        themes.forEach((theme, index) => {
+                            document.write(`
+                                <div class="theme-card glass-panel aspect-square flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer reveal-up" style="transition-delay: ${index * 75}ms">
+                                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0"></div>
+                                    <div class="absolute inset-0 bg-crimson/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0"></div>
+                                    <h4 class="relative z-10 font-serif text-xl md:text-2xl text-muted group-hover:text-ivory transition-colors duration-500 transform group-hover:scale-110">${theme}</h4>
+                                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-1 h-1 bg-gold rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </div>
+                            `);
+                        });
+                    </script>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: QUOTES SECTION -->
+        <section id="quotes" class="py-32 md:py-48 bg-deep relative overflow-hidden flex flex-col gap-32 md:gap-48">
+            <div class="quote-container max-w-5xl mx-auto px-6 text-center reveal-up">
+                <p class="font-serif text-3xl md:text-5xl lg:text-7xl text-ivory italic leading-snug">
+                    "Kuch log zindagi se chale jaate hain,<br>
+                    <span class="text-muted">par kahani se kabhi nahi jaate.</span>"
+                </p>
+            </div>
+
+            <div class="quote-container max-w-5xl mx-auto px-6 text-center reveal-up">
+                <p class="font-serif text-3xl md:text-5xl lg:text-7xl text-ivory italic leading-snug">
+                    "Tu kahani banke reh gayi,<br>
+                    <span class="text-muted">aur main uska adhura kirdaar.</span>"
+                </p>
+            </div>
+
+            <div class="quote-container max-w-5xl mx-auto px-6 text-center reveal-up">
+                <p class="font-serif text-3xl md:text-5xl lg:text-7xl text-ivory italic leading-snug">
+                    "Aankh khuli<br>
+                    <span class="text-muted">toh khwaab tha.</span>"
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CHAPTER EXPERIENCE -->
+        <section id="chapters" class="py-32 bg-charcoal">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex items-end justify-between mb-16 reveal-up">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-serif text-ivory mb-2">The Chapters</h2>
+                        <p class="text-muted uppercase tracking-[0.2em] text-xs">A Journey Through Time</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    <script>
+                        const chapters = [
+                            { title: 'Jo Hona Tha', no: 'I' },
+                            { title: 'Wo Wo Thi', no: 'II' },
+                            { title: 'Khwaab', no: 'III' },
+                            { title: 'Pehli Nazar', no: 'IV' },
+                            { title: 'Pehla Message', no: 'V' },
+                            { title: 'Pehli Call', no: 'VI' },
+                            { title: 'Last Call', no: 'VII' },
+                            { title: 'Last Message', no: 'VIII' },
+                            { title: 'Last Photo', no: 'IX' },
+                            { title: 'Lucknow Diary', no: 'X' }
+                        ];
+                        chapters.forEach((chap, i) => {
+                            document.write(`
+                                <div class="chapter-card group relative h-64 border border-white/10 bg-graphite overflow-hidden reveal-up" style="transition-delay: ${(i % 5) * 100}ms">
+                                    <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-700 z-10"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-20"></div>
+                                    
+                                    <div class="absolute top-4 left-4 z-30 opacity-50 font-serif italic text-white group-hover:opacity-100 transition-opacity">
+                                        Chapter ${chap.no}
+                                    </div>
+                                    
+                                    <div class="absolute bottom-6 left-6 right-6 z-30">
+                                        <h3 class="font-serif text-xl text-ivory mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">${chap.title}</h3>
+                                        <div class="h-[1px] w-0 bg-gold group-hover:w-full transition-all duration-700 ease-in-out"></div>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    </script>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: THE LUCKNOW CHAPTER -->
+        <section id="lucknow" class="relative py-40 md:py-64 overflow-hidden bg-deep">
+            <!-- Atmospheric Background -->
+            <div class="absolute inset-0 z-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80')] bg-cover bg-center bg-no-repeat bg-fixed filter grayscale sepia-[0.3]"
+                id="lucknow-bg"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-deep via-deep/80 to-deep z-0"></div>
+
+            <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+                <p class="text-crimson uppercase tracking-[0.4em] text-sm font-semibold mb-6 reveal-up">The Climax</p>
+                <h2 class="text-5xl md:text-7xl font-serif text-ivory mb-10 text-glow reveal-up">The Lucknow Chapter
+                </h2>
+                <p class="text-xl md:text-2xl text-muted font-light leading-relaxed max-w-2xl mx-auto italic reveal-up">
+                    Some places hold the echoes of conversations we never finished. The answers to everything are hidden
+                    here, in the city where time stood still.
+                </p>
+                <div class="mt-16 reveal-up">
+                    <div class="inline-block border border-white/20 p-1 rounded-full">
+                        <div class="w-2 h-2 bg-crimson rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: AUTHOR BRANDING -->
+        <section id="author" class="py-32 bg-charcoal">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="grid md:grid-cols-12 gap-12 items-center">
+                    <div class="md:col-span-5 relative reveal-fade">
+                        <div class="aspect-[3/4] overflow-hidden grayscale contrast-125 relative">
+                            <!-- Placeholder for Author Image -->
+                            <img src="WhatsApp Image 2026-05-31 at 9.26.27 PM.jpeg" alt="Yash Kumar Prajapati"
+                                class="object-cover w-full h-full hover:scale-105 transition-transform duration-1000">
+                            <div class="absolute inset-0 bg-black/20"></div>
+                        </div>
+                        <div
+                            class="absolute -bottom-6 -right-6 w-32 h-32 bg-graphite border border-white/10 flex items-center justify-center p-4 text-center z-10">
+                            <span class="font-serif italic text-sm text-muted">Memory<br>Collector</span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 md:pl-12 space-y-8 reveal-up">
+                        <div>
+                            <h2 class="text-4xl md:text-6xl font-serif text-ivory mb-2">Yash Kumar Prajapati</h2>
+                            <p class="text-gold uppercase tracking-[0.2em] text-xs">Storyteller & Poet</p>
+                        </div>
+
+                        <div class="space-y-6 text-muted font-light leading-relaxed text-lg">
+                            <p>Yash does not write stories; he translates silences. Through "WO...", he explores the
+                                delicate architecture of what could have been.</p>
+                            <p>His writing captures the visceral reality of a future dismantled, proving that sometimes
+                                the most profound love stories are the ones that are survived, rather than lived.</p>
+                        </div>
+
+                        <a href="#"
+                            class="inline-block border-b border-white/30 pb-1 text-sm uppercase tracking-widest hover:text-ivory hover:border-ivory transition-all duration-300">
+                            Read Full Biography
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7 & 8: BOOK SHOWCASE & BUY -->
+        <section id="buy" class="py-32 relative bg-deep overflow-hidden">
+            <!-- Glow effect behind book -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-ivory/5 blur-[100px] rounded-full z-0 pointer-events-none">
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+
+                <!-- 3D Book Showcase -->
+                <div class="perspective-1000 w-full max-w-sm mx-auto lg:mx-0 reveal-fade">
+                    <div
+                        class="book-container relative preserve-3d transition-transform duration-700 hover:-rotate-y-12 cursor-pointer shadow-2xl">
+                        <!-- Book Cover Mockup -->
+                        <div
+                            class="aspect-[2/3] bg-gradient-to-br from-[#1a1a1a] to-black border-l-4 border-[#0a0a0a] shadow-[10px_20px_30px_rgba(0,0,0,0.8)] relative overflow-hidden p-0">
+                            <!-- Cover image inserted here; ensure the file "BOOK COVER MNE 88143.png" is placed in the site root -->
+                            <img src="88143.png" alt="Book Cover" class="absolute inset-0 w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-8 text-xs text-muted uppercase tracking-widest">
+                        <span>Hardcover</span> • <span>Paperback</span> • <span>Kindle</span>
+                    </div>
+                </div>
+
+                <!-- Coming Soon Message -->
+                <div class="space-y-10 reveal-up text-center">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-serif text-ivory mb-4">Coming Soon</h2>
+                        <p class="text-muted font-light text-lg">This edition will be available soon — stay tuned for updates.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: EMOTION -->
+        <section class="py-32 bg-charcoal text-center px-6">
+            <h3 class="text-2xl md:text-3xl font-serif text-muted italic reveal-up">"What If Some Stories Never Leave?"
+            </h3>
+        </section>
+
+        <!-- FINAL BREATHTAKING ENDING -->
+        <section class="h-[120vh] bg-deep flex flex-col items-center justify-center relative overflow-hidden"
+            id="final-section">
+            <div class="text-center z-10 px-4" id="final-text-container">
+                <h2 class="text-4xl md:text-6xl font-serif text-ivory mb-8 opacity-100" id="final-text-1">
+                    Not every goodbye ends the story.
+                </h2>
+                <h2 class="text-5xl md:text-8xl font-serif text-ivory text-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full opacity-0 scale-90"
+                    id="final-text-2">
+                    Some stories stay forever.
+                </h2>
+            </div>
+
+            <div class="absolute bottom-32 left-1/2 -translate-x-1/2 opacity-0 z-20" id="final-cta">
+                <a href="#buy"
+                    class="group relative inline-flex items-center justify-center px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-deep bg-ivory overflow-hidden">
+                    <span
+                        class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                    <span class="relative">Coming Soon</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <script>
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- Cinematic Smooth Scrolling (Lenis) ---
+        // Lerp dictates the "heaviness" or smoothness. Lower = smoother/cinematic.
+        const lenis = new Lenis({
+            lerp: 0.04,
+            smoothWheel: true,
+            wheelMultiplier: 0.8, // Slightly slows down mouse wheel for elegance
+            touchMultiplier: 1.5,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Integrated GSAP with Lenis
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+
+        // --- Upgraded Cinematic Preloader Sequence ---
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+
+            // 1. Title slowly resolves from a heavy blur
+            tl.to('#preloader-title', {
+                opacity: 1,
+                filter: 'blur(0px)',
+                scale: 1,
+                duration: 2.5,
+                ease: 'power3.out'
+            })
+
+                // 2. Subtext appears and slowly spaces out
+                .to('#preloader-text', {
+                    opacity: 1,
+                    letterSpacing: '0.6em',
+                    duration: 2,
+                    ease: 'power2.out'
+                }, "-=1.5")
+
+                // 3. Crisp animated line cuts through
+                .to('#preloader-line', {
+                    width: '100%',
+                    duration: 2,
+                    ease: 'power4.inOut'
+                }, "-=1")
+
+                // 4. Everything slowly blurs and fades away
+                .to(['#preloader-title', '#preloader-text', '#preloader-line'], {
+                    opacity: 0,
+                    filter: 'blur(15px)',
+                    scale: 1.1,
+                    duration: 2,
+                    stagger: 0.1,
+                    ease: 'power2.in'
+                }, "+=0.5")
+
+                // 5. Hide the black preloader screen completely
+                .to('#preloader', {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        document.getElementById('preloader').style.display = 'none';
+                        ScrollTrigger.refresh();
+                    }
+                }, "-=1")
+
+                // 6. Reveal the hero content smoothly
+                .to('.reveal-up', {
+                    y: 0,
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    duration: 2,
+                    stagger: 0.2,
+                    ease: 'power4.out',
+                }, "-=1.5");
+        });
+
+        // --- Sticky Header Logic ---
+        let lastScroll = 0;
+        const header = document.getElementById('header');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll <= 0) {
+                header.style.transform = 'translateY(0)';
+                return;
+            }
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                // Scroll Down
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll Up
+                header.style.transform = 'translateY(0)';
+            }
+            lastScroll = currentScroll;
+        });
+
+        // --- Global Cinematic Scroll Animations ---
+
+        // Hero Video Parallax (Scales down and moves up slightly)
+        gsap.to('#hero-video', {
+            scrollTrigger: {
+                trigger: 'section.relative.h-screen',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            },
+            y: '15%',
+            scale: 1,
+            opacity: 0.3,
+            ease: 'none'
+        });
+
+        // Blur to Focus reveals
+        gsap.utils.toArray('.reveal-up').forEach(element => {
+            if (!element.closest('#hero-content')) {
+                gsap.to(element, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    y: 0,
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    duration: 1.8,
+                    ease: 'power4.out'
+                });
+            }
+        });
+
+        // Simple Cinematic Fades
+        gsap.utils.toArray('.reveal-fade').forEach(element => {
+            gsap.to(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration: 2,
+                ease: 'power3.out'
+            });
+        });
+
+        // --- Specific Section Animations ---
+
+        // Quotes Parallax/Scale effect with Scrubbing for ultra-smoothness
+        gsap.utils.toArray('.quote-container').forEach(container => {
+            gsap.to(container, {
+                scrollTrigger: {
+                    trigger: container,
+                    start: 'top 90%',
+                    end: 'bottom 10%',
+                    scrub: 1.5 // 1.5 second lag makes it incredibly smooth
+                },
+                scale: 0.9,
+                opacity: 0.3,
+                filter: 'blur(5px)'
+            });
+        });
+
+        // Lucknow Background Parallax
+        gsap.to('#lucknow-bg', {
+            scrollTrigger: {
+                trigger: '#lucknow',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true
+            },
+            y: '20%',
+            ease: 'none'
+        });
+
+        // Final Section Cinematic Ending
+        const finalSection = document.getElementById('final-section');
+        const text1 = document.getElementById('final-text-1');
+        const text2 = document.getElementById('final-text-2');
+        const cta = document.getElementById('final-cta');
+
+        ScrollTrigger.create({
+            trigger: finalSection,
+            start: "top top",
+            end: "+=150%", // Extended pin for a longer cinematic pause
+            pin: true,
+            scrub: 1.5, // Smooth interpolation
+            onUpdate: (self) => {
+                const progress = self.progress;
+
+                // Text 1 fade out
+                if (progress > 0.35) {
+                    text1.style.opacity = '0';
+                    text1.style.filter = 'blur(10px)';
+                    text1.style.transform = 'translateY(-20px)';
+                } else {
+                    text1.style.opacity = '1';
+                    text1.style.filter = 'blur(0px)';
+                    text1.style.transform = 'translateY(0px)';
+                    text1.style.transition = 'all 0.5s ease-out';
+                }
+
+                // Text 2 fade in and scale up
+                if (progress > 0.5) {
+                    text2.style.opacity = '1';
+                    text2.style.transform = 'translate(-50%, -50%) scale(1)';
+                    text2.style.filter = 'blur(0px)';
+                } else {
+                    text2.style.opacity = '0';
+                    text2.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                    text2.style.filter = 'blur(10px)';
+                    text2.style.transition = 'all 0.5s ease-out';
+                }
+
+                // Call to action fade in
+                if (progress > 0.8) {
+                    cta.style.opacity = '1';
+                    cta.style.transform = 'translateX(-50%) translateY(0)';
+                } else {
+                    cta.style.opacity = '0';
+                    cta.style.transform = 'translateX(-50%) translateY(20px)';
+                    cta.style.transition = 'all 0.8s ease-out';
+                }
+            }
+        });
+
+        // CSS specific styles needed dynamically
+        document.head.insertAdjacentHTML("beforeend", `<style>
+            .perspective-1000 { perspective: 1000px; }
+            .preserve-3d { transform-style: preserve-3d; }
+            .-rotate-y-12 { transform: rotateY(-12deg); }
+        </style>`);
+
+    </script>
+</body>
+
+</html>
