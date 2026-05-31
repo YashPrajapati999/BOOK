@@ -137,6 +137,26 @@
             opacity: 0;
             filter: blur(8px);
         }
+
+        /* Mobile video fixes: ensure full-bleed cover and correct centering on small viewports */
+        #hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw !important;
+            height: 100vh !important;
+            object-fit: cover !important;
+            object-position: center center !important;
+            will-change: transform;
+        }
+
+        @media (max-width: 640px) {
+            /* disable any scale transforms applied by utility classes on mobile */
+            .scale-110 { transform: none !important; }
+            /* make sure overlay sits above video */
+            #mobile-play-overlay { z-index: 25; }
+        }
     </style>
 </head>
 
@@ -809,6 +829,23 @@
             // Toggle overlay on pause/play
             video.addEventListener('play', () => overlay.style.display = 'none');
             video.addEventListener('pause', () => overlay.style.display = '');
+        })();
+
+        // --- Ensure video matches true viewport on mobile (handle address-bar resizing) ---
+        (function fixHeroVideoViewport() {
+            const video = document.getElementById('hero-video');
+            if (!video) return;
+
+            function resizeVideo() {
+                // Use window.innerHeight to account for mobile browser chrome
+                video.style.width = window.innerWidth + 'px';
+                video.style.height = window.innerHeight + 'px';
+            }
+
+            window.addEventListener('resize', resizeVideo, { passive: true });
+            window.addEventListener('orientationchange', resizeVideo);
+            // Call once to initialize
+            resizeVideo();
         })();
 
     </script>
