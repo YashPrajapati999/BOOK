@@ -138,17 +138,17 @@
             filter: blur(8px);
         }
 
-        /* Mobile video fixes: ensure full-bleed cover and correct centering on small viewports */
+        /* Mobile video fixes: ensure full-bleed cover and correct centering on all viewports */
         #hero-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: none !important;
             width: 100vw !important;
             height: 100vh !important;
             object-fit: cover !important;
             object-position: center center !important;
-            will-change: transform;
+            z-index: 0;
         }
 
         @media (max-width: 640px) {
@@ -831,22 +831,7 @@
             video.addEventListener('pause', () => overlay.style.display = '');
         })();
 
-        // --- Ensure video matches true viewport on mobile (handle address-bar resizing) ---
-        (function fixHeroVideoViewport() {
-            const video = document.getElementById('hero-video');
-            if (!video) return;
-
-            function resizeVideo() {
-                // Use window.innerHeight to account for mobile browser chrome
-                video.style.width = window.innerWidth + 'px';
-                video.style.height = window.innerHeight + 'px';
-            }
-
-            window.addEventListener('resize', resizeVideo, { passive: true });
-            window.addEventListener('orientationchange', resizeVideo);
-            // Call once to initialize
-            resizeVideo();
-        })();
+        // Removed dynamic inline resizing — video is fixed and covers viewport via CSS
 
     </script>
 </body>
