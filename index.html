@@ -182,13 +182,18 @@
         <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
             <!-- Video Background -->
             <div class="absolute inset-0 z-0">
-                <video autoplay loop muted playsinline poster="88143.png" class="object-cover w-full h-full opacity-80 scale-110 hidden sm:block"
+                <video autoplay loop muted playsinline poster="88143.png" class="object-cover w-full h-full opacity-80 scale-110"
                     id="hero-video">
                     <!-- Placeholder src. User should add their cinematic video here -->
                     <source src="Animate_the_uploaded_book_cove.mp4" type="video/mp4">
                 </video>
-                <!-- Mobile fallback: static poster/cover image for small screens -->
-                <img src="88143.png" alt="Hero cover" class="object-cover w-full h-full block sm:hidden" aria-hidden="true">
+
+                <!-- Mobile tap-to-play overlay (visible only on small screens) -->
+                <div id="mobile-play-overlay" class="absolute inset-0 z-[15] flex items-center justify-center sm:hidden">
+                    <button id="mobile-play-btn" aria-label="Play background video" class="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center border border-white/20 hover:bg-white/20">
+                        <svg class="w-8 h-8 text-ivory" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                </div>
                 <!-- Overlays for perfect text readability -->
                 <div class="absolute inset-0 bg-gradient-to-b from-deep/10 via-transparent to-deep z-10"></div>
                 <div class="absolute inset-0 bg-deep/30 z-10"></div>
@@ -766,6 +771,45 @@
             .preserve-3d { transform-style: preserve-3d; }
             .-rotate-y-12 { transform: rotateY(-12deg); }
         </style>`);
+
+        // --- Mobile tap-to-play for hero video ---
+        (function setupMobileHeroVideo() {
+            const video = document.getElementById('hero-video');
+            const overlay = document.getElementById('mobile-play-overlay');
+            const btn = document.getElementById('mobile-play-btn');
+
+            if (!video || !overlay || !btn) return;
+
+            // Hide overlay if the video is already playing
+            if (!video.paused && !video.ended) overlay.style.display = 'none';
+
+            // Try to autoplay muted once on first touch (some browsers require user interaction)
+            const tryPlay = () => {
+                video.play().then(() => {
+                    overlay.style.display = 'none';
+                }).catch(() => {
+                    // If autoplay still blocked, keep overlay visible for manual play
+                    overlay.style.display = '';
+                });
+                window.removeEventListener('touchstart', tryPlay, { passive: true });
+            };
+
+            window.addEventListener('touchstart', tryPlay, { passive: true });
+
+            // Button explicitly requests playback
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                video.play().then(() => {
+                    overlay.style.display = 'none';
+                }).catch(() => {
+                    // nothing
+                });
+            });
+
+            // Toggle overlay on pause/play
+            video.addEventListener('play', () => overlay.style.display = 'none');
+            video.addEventListener('pause', () => overlay.style.display = '');
+        })();
 
     </script>
 </body>
